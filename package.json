@@ -1,0 +1,22 @@
+{
+  "name": "hyperproduct",
+  "version": "1.0.0",
+  "description": "State management for n-dimensional product controls",
+  "main": "HyperProduct.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/benwillkommen/HyperProduct.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/benwillkommen/HyperProduct/issues"
+  },
+  "homepage": "https://github.com/benwillkommen/HyperProduct#readme",
+  "devDependencies": {
+    "jest-cli": "^12.1.1"
+  }
+}
