@@ -4,7 +4,8 @@
   "description": "State management for n-dimensional product controls",
   "main": "HyperProduct.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "testdbg": "node debug --harmony .\\node_modules\\jest-cli\\bin\\jest.js --runInBand"
   },
   "repository": {
     "type": "git",

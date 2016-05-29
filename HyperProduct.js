@@ -46,7 +46,7 @@ var HyperProduct = function(variants, dimensions){
 				if (typeof d === "undefined"){
 					//no selection has been made for this dimension
 					continue;
-				}
+				}				
 				if(variant[d] === selectedDimensions[d]){
 					//current variant could have dimension values matching selected dimensions
 					continue;
@@ -77,6 +77,7 @@ var HyperProduct = function(variants, dimensions){
 
 	self.setDimension = function(key, value){
 		selectedDimensions[key] = value;
+		return self.getState();
 	}
 };
 
