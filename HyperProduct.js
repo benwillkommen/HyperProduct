@@ -1,18 +1,18 @@
 'use strict'
 
-var HyperProduct = function(variants, dimensions){
+var HyperProduct = function(variants, dimensionConfig){
 	var self = this;
 
 	//TODO: make dimensions an object with keys that are dimension names, and values
 	//that are configuration, e.g. default dimension values
-	var sortedDimensions = dimensions.sort();
+	var sortedDimensions = dimensionConfig.sort();
 	var variantHashTable = {};
 	var selectedDimensions = {};
 
-	var formatKey = function(variant){
+	var formatKey = function(variantDimensions){
 		var dimensionValues = []
 		for (var i = 0; i < sortedDimensions.length; i++){
-			dimensionValues.push(variant[sortedDimensions[i]])
+			dimensionValues.push(variantDimensions[sortedDimensions[i]])
 		}
 		return dimensionValues.join(":");
 	}
@@ -22,14 +22,14 @@ var HyperProduct = function(variants, dimensions){
 		variantHashTable[formatKey(variant)] = variant;
 	}
 
-	self.getVariant = function(variantDimensions) {
+	var getVariant = function(variantDimensions) {
 		if (Object.keys(variantDimensions).length < sortedDimensions.length){
 			return undefined;
 		}
 		return variantHashTable[formatKey(variantDimensions)];
 	}
 
-	self.getSelectableDimensions = function(){
+	var getSelectableDimensions = function(selectedDimensions){
 		let selectableDimensions = {};
 		var dimensionsToReturn = sortedDimensions.filter(function(val){
 			return typeof selectedDimensions[val] === "undefined";
@@ -65,20 +65,14 @@ var HyperProduct = function(variants, dimensions){
 			}
 		}
 		return selectableDimensions;
-	}
-
-	self.getState = function(){
+	}	
+	
+	self.query = function(dimensions){
 		return {
-			selectedDimensions: selectedDimensions,
-			selectableDimensions: self.getSelectableDimensions(),
-			selectedVariant: self.getVariant(selectedDimensions)
+			selectableDimensions: getSelectableDimensions(dimensions),
+			selectedVariant: getVariant(dimensions)
 		};
 	};
-
-	self.setDimension = function(key, value){
-		selectedDimensions[key] = value;
-		return self.getState();
-	}
 };
 
 module.exports = HyperProduct;
