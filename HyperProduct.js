@@ -40,25 +40,17 @@ var HyperProduct = function(variants, dimensions){
 		}
 
 		for (var i = 0; i < variants.length; i++){
-			
-
 			var variant = variants[i];
 			var dimensionCombinationExists = true;
-
-
 			for (let d in selectedDimensions){
-
-
 				if (typeof d === "undefined"){
 					//no selection has been made for this dimension
 					continue;
-				}	
-
+				}
 				if(variant[d] === selectedDimensions[d]){
 					//current variant could have dimension values matching selected dimensions
 					continue;
 				}
-
 				//if we get here, the variant has a dimension that does not match the selected dimesions
 				dimensionCombinationExists = false;
 				break;
@@ -70,12 +62,18 @@ var HyperProduct = function(variants, dimensions){
 				for (let d in selectableDimensions){
 					selectableDimensions[d].add(variant[d]);
 				}
-
 			}
 		}
 		return selectableDimensions;
-
 	}
+
+	self.getState = function(){
+		return {
+			selectedDimensions: selectedDimensions,
+			selectableDimensions: self.getSelectableDimensions(),
+			selectedVariant: self.getVariant(selectedDimensions)
+		};
+	};
 
 	self.setDimension = function(key, value){
 		selectedDimensions[key] = value;
