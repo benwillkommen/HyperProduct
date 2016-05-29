@@ -7,7 +7,6 @@ var HyperProduct = function(variants, dimensionConfig){
 	//that are configuration, e.g. default dimension values
 	var sortedDimensions = dimensionConfig.sort();
 	var variantHashTable = {};
-	var selectedDimensions = {};
 
 	var formatKey = function(variantDimensions){
 		var dimensionValues = []
