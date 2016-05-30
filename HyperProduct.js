@@ -1,46 +1,59 @@
 'use strict'
 
-var HyperProduct = function(variants, dimensionConfig){
-	var self = this;
+let HyperProduct = function(variants, dimensions, defaultDimensionValues){
+	let self = this;
+	
+	let sortedDimensions = dimensions.sort();
+	let defaults = defaultDimensionValues || {};
+	let variantHashTable = {};
 
-	//TODO: make dimensions an object with keys that are dimension names, and values
-	//that are configuration, e.g. default dimension values
-	var sortedDimensions = dimensionConfig.sort();
-	var variantHashTable = {};
-
-	var formatKey = function(variantDimensions){
-		var dimensionValues = []
-		for (var i = 0; i < sortedDimensions.length; i++){
+	let formatKey = function(variantDimensions){
+		let dimensionValues = []
+		for (let i = 0; i < sortedDimensions.length; i++){
 			dimensionValues.push(variantDimensions[sortedDimensions[i]])
 		}
 		return dimensionValues.join(":");
 	}
 
-	for (var i = 0; i < variants.length; i++){
+	let ensureDimensions = function(variant){
+		for (let i = 0; i < sortedDimensions.length; i++){
+			if(!(sortedDimensions[i] in variant)){
+				if(sortedDimensions[i] in defaults) {
+					variant[sortedDimensions[i]] = defaults[sortedDimensions[i]];
+				}
+				else {
+					throw "Variant encountered with no dimension value for \"" + sortedDimensions[i] + "\" and no default dimension value." 
+				}
+			}
+		}
+	};
+
+	for (let i = 0; i < variants.length; i++){
 		let variant = variants[i];
+		ensureDimensions(variant);
 		variantHashTable[formatKey(variant)] = variant;
 	}
 
-	var getVariant = function(variantDimensions) {
+	let getVariant = function(variantDimensions) {
 		if (Object.keys(variantDimensions).length < sortedDimensions.length){
 			return undefined;
 		}
 		return variantHashTable[formatKey(variantDimensions)];
 	}
 
-	var getSelectableDimensions = function(selectedDimensions){
+	let getSelectableDimensions = function(selectedDimensions){
 		let selectableDimensions = {};
-		var dimensionsToReturn = sortedDimensions.filter(function(val){
+		let dimensionsToReturn = sortedDimensions.filter(function(val){
 			return typeof selectedDimensions[val] === "undefined";
 		});
 		
-		for (var i = 0; i < dimensionsToReturn.length; i++){
+		for (let i = 0; i < dimensionsToReturn.length; i++){
 			selectableDimensions[dimensionsToReturn[i]] = new Set();
 		}
 
-		for (var i = 0; i < variants.length; i++){
-			var variant = variants[i];
-			var dimensionCombinationExists = true;
+		for (let i = 0; i < variants.length; i++){
+			let variant = variants[i];
+			let dimensionCombinationExists = true;
 			for (let d in selectedDimensions){
 				if (typeof d === "undefined"){
 					//no selection has been made for this dimension
@@ -63,6 +76,13 @@ var HyperProduct = function(variants, dimensionConfig){
 				}
 			}
 		}
+
+		//if any dimensions have no values in thier set, delete the keys
+		for (let d in selectableDimensions){
+			if (selectableDimensions[d].size === 0)
+				delete selectableDimensions[d];
+		}
+
 		return selectableDimensions;
 	}	
 	
