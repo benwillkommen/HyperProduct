@@ -1,0 +1,6 @@
+{
+  "name": "Hyperproduct",
+  "tagline": "Queryable object for n-dimensional product controls",
+  "body": "### About\r\nThis project was created to facilitate the creation of product controls in the the context of an ecommerce site, where the number and type of dimensions are not known ahead of time.\r\n\r\nA hyperproduct constructor is passed an array of variants (plain javascript objects), as well as an array of strings specifying which properties of the variants are dimensions.\r\n\r\nOnce a hyperproduct is constructed, it can be queried by passing object with specified dimensions, and it will return an object representing the valid dimensions that could be selected given the query, and a variant if all necessary dimensions are specified.\r\n\r\nSee tests for examples.\r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
