@@ -1,0 +1,10 @@
+.product-control{
+    background-color:LightGrey;
+    color:black;
+    padding:5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    border:solid 1px;}
+.enabled{background-color:white;}
+.selected{background-color:lightblue;}

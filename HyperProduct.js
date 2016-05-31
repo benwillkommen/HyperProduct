@@ -2,7 +2,7 @@
 
 let HyperProduct = function(variants, dimensions, defaultDimensionValues){
 	let self = this;
-	
+
 	let sortedDimensions = dimensions.sort();
 	let defaults = defaultDimensionValues || {};
 	let variantHashTable = {};
@@ -22,7 +22,7 @@ let HyperProduct = function(variants, dimensions, defaultDimensionValues){
 					variant[sortedDimensions[i]] = defaults[sortedDimensions[i]];
 				}
 				else {
-					throw "Variant encountered with no dimension value for \"" + sortedDimensions[i] + "\" and no default dimension value." 
+					throw "Variant encountered with no dimension value for \"" + sortedDimensions[i] + "\" and no default dimension value."
 				}
 			}
 		}
@@ -46,7 +46,7 @@ let HyperProduct = function(variants, dimensions, defaultDimensionValues){
 		let dimensionsToReturn = sortedDimensions.filter(function(val){
 			return typeof selectedDimensions[val] === "undefined";
 		});
-		
+
 		for (let i = 0; i < dimensionsToReturn.length; i++){
 			selectableDimensions[dimensionsToReturn[i]] = new Set();
 		}
@@ -55,10 +55,10 @@ let HyperProduct = function(variants, dimensions, defaultDimensionValues){
 			let variant = variants[i];
 			let dimensionCombinationExists = true;
 			for (let d in selectedDimensions){
-				if (typeof d === "undefined"){
+				if (typeof selectedDimensions[d] === "undefined"){
 					//no selection has been made for this dimension
 					continue;
-				}				
+				}
 				if(variant[d] === selectedDimensions[d]){
 					//current variant could have dimension values matching selected dimensions
 					continue;
@@ -70,7 +70,7 @@ let HyperProduct = function(variants, dimensions, defaultDimensionValues){
 
 			if (dimensionCombinationExists){
 				//add dimensions of this variant to the selectable dimensions ONLY for dimensions that
-				//are not currently selected				
+				//are not currently selected
 				for (let d in selectableDimensions){
 					selectableDimensions[d].add(variant[d]);
 				}
@@ -84,8 +84,8 @@ let HyperProduct = function(variants, dimensions, defaultDimensionValues){
 		}
 
 		return selectableDimensions;
-	}	
-	
+	}
+
 	self.query = function(dimensions){
 		return {
 			selectableDimensions: getSelectableDimensions(dimensions),
