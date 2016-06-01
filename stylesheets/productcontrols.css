@@ -7,4 +7,4 @@
     border-radius: 5px;
     border:solid 1px;}
 .enabled{background-color:white;}
-.selected{background-color:lightblue;}
+.selected{background-color:lightblue;border:solid 2px green;}

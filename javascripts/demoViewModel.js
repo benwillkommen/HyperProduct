@@ -16,52 +16,64 @@ let demoViewModel = function(variants, dimensions, defaults){
     };
 
     let selectDimension = (element) => {
-        if(!element.enabled()){
-            //clicked element not enabled, do nothing
-            return;
-        }
+        if (element.enabled()){
+            let queryParameters = self.getSelectedDimensions();
+            queryParameters[element.name] = element.value;
 
-        let queryParameters = self.getSelectedDimensions();
+            let results = hyperProduct.query(queryParameters);
+            console.log(results);
 
-        queryParameters[element.name] = element.value;
+            if (typeof results.selectedVariant === "undefined"){
+                if (Object.keys(results.selectableDimensions).length === 0){
+                    //query matched no variants. clear selections and re-query with only the element that was just selected
+                    self.dimensions.forEach((dimensionArray) => {
+                        dimensionArray.forEach((e) => {
+                            if (Object.keys(results.selectableDimensions).length === 0){
+                                e.selected(false);
+                            }
+                        });
+                    });
+                    queryParameters = {};
+                    queryParameters[element.name] = element.value;
+                    results = hyperProduct.query(queryParameters);
+                }
 
-        let results = hyperProduct.query(queryParameters);
-        console.log(results);
-        self.lastQueryResults(results);
+                self.dimensions.forEach((dimensionArray) => {
+                    dimensionArray.forEach((e) => {
+                            if (Object.keys(results.selectableDimensions).length === 0){
+                                e.selected(false);
+                            }
 
-        if (typeof results.selectedVariant === "undefined"){
-            if (Object.keys(results.selectableDimensions).length === 0){
-                //invalid selection made somehow, do nothing
-                return;
+                            if (typeof results.selectableDimensions[e.name] === "undefined" || results.selectableDimensions[e.name].has(e.value)){
+                                e.enabled(true);
+                            }
+                            else {
+                                e.enabled(false);
+                                e.selected(false);
+                            }
+
+                    });
+                });
+            }
+            else {
+                //a variant was selected! enable all the controls
+                self.dimensions.forEach((dimensionArray) => {
+                    dimensionArray.forEach((item, index, array) => {
+                        item.enabled(true);
+                    });
+                });
             }
 
-            self.dimensions.forEach((dimensionArray) => {
-                dimensionArray.forEach((e) => {
-                   if (typeof results.selectableDimensions[e.name] === "undefined" || results.selectableDimensions[e.name].has(e.value)){
-                        e.enabled(true);
-                    }
-                    else{
-                        e.enabled(false);
-                    }
-                });
-            });
-        }
-        else {
-            //a variant was selected! enable all the controls
-            self.dimensions.forEach((dimensionArray) => {
-                dimensionArray.forEach((item, index, array) => {
-                    item.enabled(true);
-                });
-            });
-        }
+            self.lastQueryResults(results);
 
-        //for the new selected dimension, unselect all the other values, and select the new one
-        self.dimensions.filter((e) => {return e[0].name === element.name}).forEach((item, index, array)=>{
-            item.forEach((e, i, a) => {
-                e.selected(false);
+            //for the new selected dimension, unselect all the other values, and select the new one
+            self.dimensions.filter((e) => {return e[0].name === element.name}).forEach((item, index, array)=>{
+                item.forEach((e, i, a) => {
+                    e.selected(false);
+                });
             });
-        });
-        element.selected(true);
+            element.selected(true);
+        }
     }
 
     self.dimensions = [];
@@ -98,6 +110,5 @@ let demoViewModel = function(variants, dimensions, defaults){
         }
         return JSON.stringify(formattedResults, undefined, 2);
     });
-
 
 };

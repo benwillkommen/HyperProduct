@@ -104,7 +104,7 @@
           </p>
           <div data-bind="foreach: dimensions">
             <p data-bind="foreach: $data">
-              <span class="product-control" data-bind="text: value, click: selectDimension, css: {enabled: enabled || selected, selected: selected}"> </span>
+              <span class="product-control" data-bind="text: value, click: selectDimension, css: {disabled: !enabled(), enabled: enabled, selected: selected}"> </span>
             </p>
 
           </div>
@@ -124,6 +124,10 @@
     <script src="javascripts/demoViewModel.js"></script>
     <script>
       let variants =  [
+          {"size": "M", "color": "red", "id": "123"},
+          {"size": "L", "color": "white", "id": "123"},
+          {"size": "S", "color": "white", "id": "123"},
+          {"size": "S", "color": "black", "id": "123"},
           {"size": "L", "color": "white", "id": "123"},
           {"size": "M", "color": "white", "packsize": "3", "id": "456"},
           {"size": "L", "color": "black", "packsize": "3", "id": "789"}
