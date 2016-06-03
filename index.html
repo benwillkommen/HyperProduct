@@ -104,7 +104,7 @@
           </p>
           <div data-bind="foreach: dimensions">
             <p data-bind="foreach: $data">
-              <span class="product-control" data-bind="text: value, click: selectDimension, css: {disabled: !enabled(), enabled: enabled, selected: selected}"> </span>
+              <span class="product-control" data-bind="text: value, click: toggleDimension, css: {disabled: !enabled(), enabled: enabled, selected: selected}"> </span>
             </p>
 
           </div>

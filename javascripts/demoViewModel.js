@@ -15,64 +15,54 @@ let demoViewModel = function(variants, dimensions, defaults){
         return selectedDimensions
     };
 
-    let selectDimension = (element) => {
-        if (element.enabled()){
+    let toggleDimension = (element) => {
+        if (element.enabled() || element.selected()){
+
+            //for the clicked dimension, unselect all the other values
+            self.dimensions.filter((e) => {return e[0].name === element.name}).forEach((item, index, array)=>{
+                item.forEach((e, i, a) => {
+                    if (e.value !== element.value){
+                        e.selected(false);
+                    }
+                });
+            });
+
+            if (!element.selected()){
+                //toggling from not selected to not selected
+                element.selected(true);
+            }
+            else {
+                //toggling from not selected to selected
+                element.selected(false);
+            }
+
             let queryParameters = self.getSelectedDimensions();
-            queryParameters[element.name] = element.value;
 
             let results = hyperProduct.query(queryParameters);
             console.log(results);
 
             if (typeof results.selectedVariant === "undefined"){
-                if (Object.keys(results.selectableDimensions).length === 0){
-                    //query matched no variants. clear selections and re-query with only the element that was just selected
-                    self.dimensions.forEach((dimensionArray) => {
-                        dimensionArray.forEach((e) => {
-                            if (Object.keys(results.selectableDimensions).length === 0){
-                                e.selected(false);
-                            }
-                        });
-                    });
-                    queryParameters = {};
-                    queryParameters[element.name] = element.value;
-                    results = hyperProduct.query(queryParameters);
-                }
-
+                let queryKeys = Object.keys(queryParameters);
                 self.dimensions.forEach((dimensionArray) => {
                     dimensionArray.forEach((e) => {
-                            if (Object.keys(results.selectableDimensions).length === 0){
-                                e.selected(false);
-                            }
-
-                            if (typeof results.selectableDimensions[e.name] === "undefined" || results.selectableDimensions[e.name].has(e.value)){
-                                e.enabled(true);
-                            }
-                            else {
-                                e.enabled(false);
-                                e.selected(false);
-                            }
-
+                        if (queryKeys.length === 1 && e.name === queryKeys[0]) {
+                            //only one dimension is specified.
+                            //don't disable selected dimensions controls
+                            e.enabled(true);
+                        }
+                        else if (typeof results.selectableDimensions[e.name] !== "undefined" && results.selectableDimensions[e.name].has(e.value)){
+                            //query results show that this element is selectable.
+                            //enable it
+                            e.enabled(true);
+                        }
+                        else {
+                            e.enabled(false);
+                        }
                     });
                 });
             }
-            else {
-                //a variant was selected! enable all the controls
-                self.dimensions.forEach((dimensionArray) => {
-                    dimensionArray.forEach((item, index, array) => {
-                        item.enabled(true);
-                    });
-                });
-            }
-
             self.lastQueryResults(results);
 
-            //for the new selected dimension, unselect all the other values, and select the new one
-            self.dimensions.filter((e) => {return e[0].name === element.name}).forEach((item, index, array)=>{
-                item.forEach((e, i, a) => {
-                    e.selected(false);
-                });
-            });
-            element.selected(true);
         }
     }
 
@@ -84,7 +74,7 @@ let demoViewModel = function(variants, dimensions, defaults){
             return {
                         "name": item,
                         "value":s,
-                        "selectDimension": selectDimension,
+                        "toggleDimension": toggleDimension,
                         "enabled": ko.observable(true),
                         "selected": ko.observable(false)
                     }
