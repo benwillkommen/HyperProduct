@@ -101,4 +101,8 @@ let demoViewModel = function(variants, dimensions, defaults){
         return JSON.stringify(formattedResults, undefined, 2);
     });
 
+    self.formattedVariants = ko.computed(function(){
+        return JSON.stringify(variants, undefined, 2);
+    })
+
 };
